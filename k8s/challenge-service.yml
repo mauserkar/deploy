@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+  namespace: web
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: guestbook
+    tier: frontend

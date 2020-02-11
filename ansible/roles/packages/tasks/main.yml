@@ -1,0 +1,72 @@
+---
+
+- name: Run apt-get update
+  apt:
+    update_cache: yes
+
+- name: Update all packages
+  apt:
+    upgrade: dist
+
+- name: Install basics packages
+  apt:
+    pkg:
+      - iotop
+      - iftop
+      - htop
+      - sysstat
+      - ncdu
+      - git
+      - traceroute
+      - vim
+      - rpl
+      - lnav
+      - tree
+      - telnet
+      - python-pip
+      - unzip
+      - nmap
+      - screen
+      - jq
+      - curl
+      - wget
+      - ntp
+      - lsb-release
+      - sockstat
+      - bridge-utils
+      - gnupg2
+      - smbclient
+    state: present
+
+- name: aws cli
+  shell: pip install awscli
+
+- name: add repository docker
+  shell: curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
+
+- name: add repository docker
+  shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Remove docker package
+  apt: name={{item}} state=absent
+  with_items:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+
+- name: Install docker package
+  apt: name={{item}} state=present
+  with_items:
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
+
+- name: Remove useless packages from the cache
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes

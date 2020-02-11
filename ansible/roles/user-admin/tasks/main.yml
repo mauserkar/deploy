@@ -1,0 +1,64 @@
+- name: Add admin user
+  user:
+    name: "{{user}}"
+    groups: sudo
+    shell: /bin/bash
+
+- name: Create directory .ssh
+  file:
+    path: "/home/{{user}}/.ssh"
+    state: directory
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0775
+
+- name: Create directory logs
+  file:
+    path: "/home/{{user}}/logs"
+    state: directory
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0775
+
+- name: Create directory history Users
+  file:
+    path: "/home/{{user}}/logs/history"
+    state: directory
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0775
+
+- name: Create file history
+  file:
+    path: '/home/"{{user}}"/logs/history/history-{{ user }}.log'
+    state: touch
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0600
+
+- name: Create directory Local
+  file:
+    path: "/home/{{user}}/local"
+    state: directory
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0775
+
+- name: Copy SSH
+  copy:
+    src: "../files/admin.pub"
+    dest: "/home/{{user}}/.ssh/authorized_keys"
+    owner: "{{user}}"
+    group: "{{user}}"
+    mode: 0600
+
+- name: Sudoers config
+  shell: echo '"{{user}}" ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+- name: Sudoers.d config
+  shell: echo '"{{user}}" ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/10-admin-deployed-by-ansible
+
+- name: chmod files sudoers.d
+  file:
+    path: /etc/sudoers.d/10-admin-deployed-by-ansible
+    mode: 0440

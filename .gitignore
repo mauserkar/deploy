@@ -1,0 +1,8 @@
+*.retry
+ansible.log
+*.terraform
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+vm-local/.vagrant
+vm-local/*.log
